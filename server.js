@@ -4,6 +4,8 @@
 // init project
 var express = require('express');
 var app = express();
+var dotenv = require('dotenv');
+dotenv.config();
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -20,10 +22,22 @@ app.get("/", function (req, res) {
 
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api/timestamp/:dateString?", function (req, res) {
+  
+  if(req.params.dateString){
+    var dateStr = req.params.dateString;
+    if(new Date(dateStr).toString() != 'Invalid Date'){
+      var date = new Date(dateStr);
+      res.json({unix: date.getTime(), utc: date.toUTCString()});
+    } else {
+      res.json({error: 'Invalid Date'});
+    }
+  } else {
+    var timeNow = new Date(Date.now());
+    res.json({unix: timeNow.getTime(), utc: timeNow.toUTCString()});
+  }
+  
 });
-
 
 
 // listen for requests :)
